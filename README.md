@@ -17,6 +17,7 @@ Due to the unpredictable nature of the deal, I'm now delegating this critical ta
 The script is pretty simple. It uses:
 - Playwright
 - SMTPLIB (for email notifications)
+- Render (for continuously running the script on a schedule)
 
 
 ## TLDR
