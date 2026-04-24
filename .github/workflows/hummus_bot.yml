@@ -3,6 +3,7 @@ name: Legendary Hummus Bot
 on:
   schedule:
     - cron: '0 16 * * *'
+  workflow_dispatch:
 
 jobs:
   check-deal:
@@ -20,6 +21,7 @@ jobs:
 
       - name: Run bot
         env:
-          EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
+          RECIPIENT_EMAIL_ADDRESS: ${{ secrets.RECIPIENT_EMAIL_ADDRESS }}
+          SENDER_EMAIL_ADDRESS: ${{ secrets.SENDER_EMAIL_ADDRESS }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
         run: python main.py
