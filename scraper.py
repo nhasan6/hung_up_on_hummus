@@ -20,21 +20,19 @@ def detect_deal(page):
         else:
             print("no deal")
 
-while True:
-    try:
-        with sync_playwright() as p:
-            browser = p.firefox.launch(headless=True)
-            page = browser.new_page()
-            page.goto("https://order.toasttab.com/online/east-tea-can-new-3115-winston-churchill-blvd-unit-1")
-            page.wait_for_load_state("domcontentloaded")
-            time.sleep(3)
-            expect(page.locator("h2").nth(0)).to_contain_text("East Tea Can Mississauga") # checks that we're seeing expected info
-            print(page.locator("h2").nth(0).text_content())
+try:
+    with sync_playwright() as p:
+        browser = p.firefox.launch(headless=True)
+        page = browser.new_page()
+        page.goto("https://order.toasttab.com/online/east-tea-can-new-3115-winston-churchill-blvd-unit-1")
+        page.wait_for_load_state("domcontentloaded")
+        time.sleep(3)
+        expect(page.locator("h2").nth(0)).to_contain_text("East Tea Can Mississauga") # checks that we're seeing expected info
+        print(page.locator("h2").nth(0).text_content())
 
-            detect_deal(page)
-            browser.close()
-    except Exception as err:
+        detect_deal(page)
+        browser.close()    
+
+except Exception as err:
         subject = "Hummus Bot Error"
         send_email(subject, str(err))
-
-    time.sleep(48*60*60) # delay --> run program every 2 days 
