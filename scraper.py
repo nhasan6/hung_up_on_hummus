@@ -1,5 +1,4 @@
 from playwright.sync_api import expect, sync_playwright
-import time
 from send_alert import send_email
 
 def detect_deal(page):
@@ -22,17 +21,19 @@ def detect_deal(page):
 
 try:
     with sync_playwright() as p:
-        browser = p.firefox.launch(headless=True)
+        browser = p.chromium.launch(headless=True)
         page = browser.new_page()
         page.goto("https://order.toasttab.com/online/east-tea-can-new-3115-winston-churchill-blvd-unit-1")
-        page.wait_for_load_state("domcontentloaded")
-        time.sleep(3)
-        expect(page.locator("h2").nth(0)).to_contain_text("East Tea Can Mississauga") # checks that we're seeing expected info
+        expect(page.locator("h2").nth(0)).to_contain_text("East Tea Can Mississauga", timeout=60000) # checks that we're seeing expected info
         print(page.locator("h2").nth(0).text_content())
+
+        expect(page.get_by_role("heading", name="Legendary Hummus + Chicken")).to_be_visible(timeout=80000)
+       
 
         detect_deal(page)
         browser.close()    
 
 except Exception as err:
+        page.screenshot(path="failure.png", full_page=True)
         subject = "Hummus Bot Error"
         send_email(subject, str(err))
