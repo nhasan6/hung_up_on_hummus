@@ -19,10 +19,13 @@ def detect_deal(page):
         else:
             print("no deal")
 
-try:
-    with sync_playwright() as p:
+with sync_playwright() as p:
+    try:
+        user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
         browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
+        context = browser.new_context(user_agent=user_agent)
+        page = context.new_page()
+        stealth_sync(page)
         page.goto("https://order.toasttab.com/online/east-tea-can-new-3115-winston-churchill-blvd-unit-1")
         expect(page.locator("h2").nth(0)).to_contain_text("East Tea Can Mississauga", timeout=60000) # checks that we're seeing expected info
         print(page.locator("h2").nth(0).text_content())
@@ -33,7 +36,11 @@ try:
         detect_deal(page)
         browser.close()    
 
-except Exception as err:
-        page.screenshot(path="failure.png", full_page=True)
+    except Exception as err:
+        try:
+            page.screenshot(path="failure.png", full_page=True)
+        except Exception as screenshot_err:
+            printf(f"Failed to take screenshot: {screenshot_err}")
         subject = "Hummus Bot Error"
         send_email(subject, str(err))
+        raise err # so github actions knows to still mark as failed
