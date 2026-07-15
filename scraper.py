@@ -1,4 +1,4 @@
-from playwright.sync_api import expect, sync_playwright
+from playwright.sync_api import expect, sync_playwright, stealth_sync
 from send_alert import send_email
 
 def detect_deal(page):
