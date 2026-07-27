@@ -1,4 +1,5 @@
-from playwright.sync_api import expect, sync_playwright, stealth_sync
+from playwright.sync_api import expect, sync_playwright
+from playwright_stealth import stealth_sync
 from send_alert import send_email
 
 def detect_deal(page):
@@ -40,7 +41,7 @@ with sync_playwright() as p:
         try:
             page.screenshot(path="failure.png", full_page=True)
         except Exception as screenshot_err:
-            printf(f"Failed to take screenshot: {screenshot_err}")
+            print(f"Failed to take screenshot: {screenshot_err}")
         subject = "Hummus Bot Error"
         send_email(subject, str(err))
         raise err # so github actions knows to still mark as failed
