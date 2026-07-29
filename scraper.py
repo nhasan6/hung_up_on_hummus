@@ -1,6 +1,20 @@
 from playwright.sync_api import expect, sync_playwright
-from playwright_stealth import stealth_sync
 from send_alert import send_email
+
+def enable_stealth(context):
+    # Add small init script to reduce detection surface without external dependency
+    stealth_script = """
+    // Pass the webdriver test
+    Object.defineProperty(navigator, 'webdriver', {get: () => false});
+    // Pass the chrome test
+    window.chrome = { runtime: {} };
+    // Pass the languages test
+    Object.defineProperty(navigator, 'languages', {get: () => ['en-US', 'en']});
+    // Pass the plugins test
+    Object.defineProperty(navigator, 'plugins', {get: () => [1,2,3,4,5]});
+    """
+    context.add_init_script(stealth_script)
+
 
 def detect_deal(page):
     # look for BOGO deal
@@ -25,8 +39,9 @@ with sync_playwright() as p:
         user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
         browser = p.chromium.launch(headless=True)
         context = browser.new_context(user_agent=user_agent)
+        # Use local stealth helper instead of external playwright_stealth package which may not be available in CI
+        enable_stealth(context)
         page = context.new_page()
-        stealth_sync(page)
         page.goto("https://order.toasttab.com/online/east-tea-can-new-3115-winston-churchill-blvd-unit-1")
         expect(page.locator("h2").nth(0)).to_contain_text("East Tea Can Mississauga", timeout=60000) # checks that we're seeing expected info
         print(page.locator("h2").nth(0).text_content())
