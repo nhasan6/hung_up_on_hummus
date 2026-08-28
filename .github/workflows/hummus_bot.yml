@@ -1,39 +1,39 @@
-name: Legendary Hummus Bot
+# name: Legendary Hummus Bot
 
-on:
-  schedule:
-    - cron: '0 16 * * *'
-  workflow_dispatch:
+# on:
+#   schedule:
+#     - cron: '0 16 * * *'
+#   workflow_dispatch:
 
-jobs:
-  check-deal:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
+# jobs:
+#   check-deal:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v5
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+#       - name: Set up Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: '3.11'
 
-      - name: Install dependencies
-        run: | 
-          pip install -r requirements.txt 
-          pip install playwright-stealth
-          playwright install --with-deps chromium
+#       - name: Install dependencies
+#         run: | 
+#           pip install -r requirements.txt 
+#           pip install playwright-stealth
+#           playwright install --with-deps chromium
 
-      - name: Run bot
-        env:
-          RECIPIENT_EMAIL_ADDRESS: ${{ secrets.RECIPIENT_EMAIL_ADDRESS }}
-          SENDER_EMAIL_ADDRESS: ${{ secrets.SENDER_EMAIL_ADDRESS }}
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-        run: python scraper.py
+#       - name: Run bot
+#         env:
+#           RECIPIENT_EMAIL_ADDRESS: ${{ secrets.RECIPIENT_EMAIL_ADDRESS }}
+#           SENDER_EMAIL_ADDRESS: ${{ secrets.SENDER_EMAIL_ADDRESS }}
+#           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+#         run: python scraper.py
 
-      - name: Upload debug artifacts
-        if: always() 
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-debug
-          path: failure.png
-          if-no-files-found: ignore
+#       - name: Upload debug artifacts
+#         if: always() 
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: playwright-debug
+#           path: failure.png
+#           if-no-files-found: ignore
         
